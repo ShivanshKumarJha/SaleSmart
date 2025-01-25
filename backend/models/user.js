@@ -14,9 +14,15 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    avatar: {
-        type: String,
-        default: ''
+    image: {
+        publicId: {
+            type: String,
+            required: true,
+        },
+        url: {
+            type: String,
+            required: true,
+        }
     },
     products: [
         {

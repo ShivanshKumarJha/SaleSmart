@@ -13,7 +13,7 @@ const getHome = async (req, res) => {
         return res.status(200).json(products);
     } catch (err) {
         console.log(err);
-        return res.status(500).send({message: 'Something went wrong'});
+        return res.status(500).json({message: 'Something went wrong'});
     }
 }
 
@@ -30,19 +30,24 @@ const postProduct = async (req, res) => {
     try {
         const {productName, quantity, price, category} = req.body;
         if (!productName || !quantity || !price || !category) {
-            return res.status(400).send({message: 'Please enter a valid product'});
+            return res.status(400).json({message: 'Please enter a valid product'});
         }
         // console.log(productName, quantity, price, category);
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(401).json({message: 'Unauthorized: User not authenticated'});
+        }
 
         const newProduct = new Product({
-            productName, quantity, price, category
+            productName, quantity, price, category, user: userId,
         })
+
         await newProduct.save();
 
-        return res.status(201).send(newProduct);
+        return res.status(201).json(newProduct);
     } catch (err) {
         console.error(err);
-        return res.status(500).send({message: err.message});
+        return res.status(500).json({message: err.message});
     }
 }
 
@@ -60,19 +65,19 @@ const editProduct = async (req, res) => {
     try {
         const {productName, quantity, price, category} = req.body;
         if (!productName || !quantity || !price || !category) {
-            return res.status(400).send({message: 'Fill all required fields'});
+            return res.status(400).json({message: 'Fill all required fields'});
         }
 
         const {productId} = req.params;
         const product = await Product.findByIdAndUpdate(productId, req.body);
         if (!product) {
-            return res.status(404).send({message: 'Product not found'});
+            return res.status(404).json({message: 'Product not found'});
         }
 
-        return res.status(201).send(product);
+        return res.status(201).json(product);
     } catch (err) {
         console.error(err);
-        return res.status(500).send({message: err.message});
+        return res.status(500).json({message: err.message});
     }
 }
 
@@ -90,18 +95,18 @@ const deleteProduct = async (req, res) => {
         const {productId} = req.params;
 
         if (!productId) {
-            return res.status(404).send({message: 'Product not found'});
+            return res.status(404).json({message: 'Product not found'});
         }
 
         const product = await Product.findOneAndDelete(productId);
         if (!product) {
-            return res.status(404).send({message: 'Product not found'});
+            return res.status(404).json({message: 'Product not found'});
         }
-        return res.status(201).send(product);
+        return res.status(201).json(product);
 
     } catch (err) {
         console.error(err);
-        return res.status(500).send({message: err.message});
+        return res.status(500).json({message: err.message});
     }
 }
 
