@@ -30,7 +30,7 @@ const postProduct = async (req, res) => {
     try {
         const {productName, quantity, price, category} = req.body;
         if (!productName || !quantity || !price || !category) {
-            return res.status(400).send('Please enter a valid product');
+            return res.status(400).send({message: 'Please enter a valid product'});
         }
         // console.log(productName, quantity, price, category);
 
@@ -60,13 +60,13 @@ const editProduct = async (req, res) => {
     try {
         const {productName, quantity, price, category} = req.body;
         if (!productName || !quantity || !price || !category) {
-            return res.status(400).send('Fill all required fields');
+            return res.status(400).send({message: 'Fill all required fields'});
         }
 
         const {productId} = req.params;
         const product = await Product.findByIdAndUpdate(productId, req.body);
         if (!product) {
-            return res.status(404).send('Product not found');
+            return res.status(404).send({message: 'Product not found'});
         }
 
         return res.status(201).send(product);
@@ -76,4 +76,33 @@ const editProduct = async (req, res) => {
     }
 }
 
-export {getHome, postProduct, editProduct}
+
+const deleteProduct = async (req, res) => {
+
+    /*
+        CODE FLOW:
+        1. Extract productId from req.params
+        2. If productId DNE ,throw error
+        3. If it exists, delete it
+    */
+
+    try {
+        const {productId} = req.params;
+
+        if (!productId) {
+            return res.status(404).send({message: 'Product not found'});
+        }
+
+        const product = await Product.findOneAndDelete(productId);
+        if (!product) {
+            return res.status(404).send({message: 'Product not found'});
+        }
+        return res.status(201).send(product);
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({message: err.message});
+    }
+}
+
+export {getHome, postProduct, editProduct, deleteProduct}

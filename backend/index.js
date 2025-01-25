@@ -1,6 +1,6 @@
 import express from 'express';
 
-import routes from './routes/route.js'
+import routes from './routes/index.js'
 import {connectDB} from "./config/db.js";
 import {PORT} from "./config/environments.js";
 
