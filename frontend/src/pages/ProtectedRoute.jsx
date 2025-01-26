@@ -1,6 +1,6 @@
 import {useAuth} from "../hooks/useAuth.jsx";
-import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 const ProtectedRoute = ({children}) => {
     const {isAuthenticated} = useAuth();

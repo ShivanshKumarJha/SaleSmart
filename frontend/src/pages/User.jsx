@@ -4,9 +4,9 @@ import {useParams} from "react-router-dom";
 const User = () => {
     const {id} = useParams();
     return (
-        <div>
-            {id}
-        </div>
+        <main className='flex grow'>
+            This is the User page : {id}
+        </main>
     );
 };
 
