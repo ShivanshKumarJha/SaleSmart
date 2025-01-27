@@ -1,11 +1,11 @@
-import {useContext, useState} from "react";
-import {AuthContext} from "../contexts/AuthContext.jsx";
+import {useState} from "react";
+import BASE_URL from "../constants/BASE_URL.js";
+import {useAuth} from "./useAuth.jsx";
 
 export const useLogin = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
-    const {dispatch} = useContext(AuthContext);
-    const BASE_URL = 'http://localhost:6000/';
+    const {dispatch} = useAuth();
 
     const login = async (email, password) => {
         setIsLoading(true);

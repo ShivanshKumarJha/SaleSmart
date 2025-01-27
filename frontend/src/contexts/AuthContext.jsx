@@ -2,6 +2,7 @@ import {createContext, useEffect, useReducer} from "react";
 
 const initialState = {
     user: null,
+    isAuthenticated: false
 }
 
 /* 1. CREATING CONTEXT */
