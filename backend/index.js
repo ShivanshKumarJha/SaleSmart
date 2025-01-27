@@ -1,10 +1,19 @@
 import express from 'express';
+import cors from 'cors';
 
-import routes from './routes/index.js'
+import routes from './routes/index.js';
 import {connectDB} from "./config/db.js";
 import {PORT} from "./config/environments.js";
 
 const app = express();
+const corsOptions = {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: "50mb", extended: true}));
 
