@@ -1,11 +1,11 @@
 import React from 'react';
-import PageNav from "../components/PageNav.jsx";
+import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
 
 const Signup = () => {
     return (
         <div className='flex flex-col justify-center h-screen'>
-            <PageNav/>
+            <Header/>
             <main className='bg-orange-200 flex grow'>
                 This is the signup page of this website
             </main>
