@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useLogin} from "../hooks/useLogin.jsx";
 import {useAuth} from "../hooks/useAuth.jsx";
 import {useNavigate} from "react-router-dom";
+import Button from "./Button.jsx";
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
@@ -39,10 +40,7 @@ const LoginForm = () => {
                    onChange={(e) => setPassword(e.target.value)}
                    className='border border-gray-200 rounded-sm p-2 text-black w-72'/>
 
-            <button type='submit' disabled={isLoading}
-                    className='inline-block text-sm rounded-full bg-green-400 font-semibold uppercase tracking-wide text-stone-800 transition-colors duration-300 hover:bg-green-300 focus:bg-green-300 focus:outline-none focus:ring focus:ring-green-300 focus:ring-offset-2 cursor-pointer px-4 py-3 md:px-6 md:py-4'>
-                Login
-            </button>
+            <Button type="submit" disabled={isLoading}>Login</Button>
 
             {error && <p>Some Error occurred!</p>}
         </form>

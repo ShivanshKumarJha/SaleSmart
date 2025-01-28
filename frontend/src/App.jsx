@@ -5,7 +5,7 @@ import HomePage from "./pages/HomePage.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import AppLayout from "./pages/AppLayout.jsx";
-import Product from "./pages/Product.jsx";
+import Products from "./pages/Products.jsx";
 import User from "./pages/User.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
@@ -26,7 +26,7 @@ const App = () => {
                 >
                     <Route index element={<Navigate replace to='product'/>}/>
                     <Route path='user/:id' element={<User/>}/>
-                    <Route path='product' element={<Product/>}/>
+                    <Route path='product' element={<Products/>}/>
                 </Route>
                 <Route path='*' element={<NotFound/>}/>
             </Routes>

@@ -9,7 +9,7 @@ const getHome = async (req, res) => {
     */
 
     try {
-        const products = await Product.find();
+        const products = await Product.find().populate('user', 'name');
         return res.status(200).json(products);
     } catch (err) {
         console.log(err);
@@ -74,7 +74,7 @@ const editProduct = async (req, res) => {
             return res.status(404).json({message: 'Product not found'});
         }
 
-        return res.status(201).json(product);
+        return res.status(200).json(product);
     } catch (err) {
         console.error(err);
         return res.status(500).json({message: err.message});
@@ -102,7 +102,7 @@ const deleteProduct = async (req, res) => {
         if (!product) {
             return res.status(404).json({message: 'Product not found'});
         }
-        return res.status(201).json(product);
+        return res.status(200).json(product);
 
     } catch (err) {
         console.error(err);
