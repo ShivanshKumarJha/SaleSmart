@@ -2,9 +2,11 @@ import React from 'react';
 import {useAuth} from "../hooks/useAuth.jsx";
 import LinkButton from "./LinkButton.jsx";
 import {Link} from "react-router-dom";
+import {useLogout} from "../hooks/useLogout.jsx";
 
 const Header = () => {
     const {isAuthenticated} = useAuth();
+    const {logout} = useLogout();
     const toNav = isAuthenticated ? 'Logout' : 'Login';
     const toNavigate = isAuthenticated ? '/logout' : '/login';
 
@@ -16,7 +18,8 @@ const Header = () => {
             <ul className='flex items-center justify-between space-x-4 text-lg'>
                 <LinkButton to='/'>Home</LinkButton>
                 {isAuthenticated && <LinkButton to='/app/product'>Products</LinkButton>}
-                <LinkButton to={toNavigate}>{toNav}</LinkButton>
+                {!isAuthenticated ? <LinkButton to={toNavigate}>{toNav}</LinkButton> :
+                    <LinkButton onClick={logout}>Logout</LinkButton>}
             </ul>
         </header>
     );

@@ -7,7 +7,7 @@ const Product = () => {
         </main>*/
         /* TODO : Will work in design perspective in future */
         <main
-            className='flex grow bg-[url("/src/assets/bg.png")] bg-cover bg-center bg-no-repeat justify-center'
+            className='flex grow items-center justify-center'
         >
             <p className='p-2 text-3xl font-bold text-black-800 uppercase text-center'>
                 PRODUCT PAGE

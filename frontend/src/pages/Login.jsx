@@ -5,7 +5,7 @@ import LoginForm from "../components/LoginForm.jsx";
 
 const Login = () => {
     return (
-        <div className='flex flex-col justify-center h-screen'>
+        <div className='flex flex-col justify-center h-screen font-[Open Sans]'>
             <Header/>
             <div className='flex items-start justify-center gap-4 grow px-4 py-6'>
                 <LoginForm/>
