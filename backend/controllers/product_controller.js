@@ -56,20 +56,20 @@ const editProduct = async (req, res) => {
 
     /*
         CODE FLOW:
-        1. Get all the field values - productName, quantity, price, category
-        2. Extract the productId from the req.params
+        1. Get the productId from the req.params
+        2. Get the product from the productId
         3. Execute FindByIdAndUpdate with productId and req.body
         4. If it results in error - throw error else send response
     */
 
     try {
-        const {productName, quantity, price, category} = req.body;
-        if (!productName || !quantity || !price || !category) {
-            return res.status(400).json({message: 'Fill all required fields'});
-        }
-
         const {productId} = req.params;
-        const product = await Product.findByIdAndUpdate(productId, req.body);
+
+        const product = await Product.findByIdAndUpdate(productId, req.body, {
+            new: true,
+            runValidators: true
+        }).populate('user', 'name');
+        
         if (!product) {
             return res.status(404).json({message: 'Product not found'});
         }
