@@ -1,11 +1,22 @@
 import {useState} from "react";
-import {useProduct} from "../contexts/ProductContext.jsx";
+import {useProductContext} from "../contexts/ProductContext.jsx";
 import BASE_URL from "../constants/BASE_URL.js";
+import {useAuth} from "./useAuth.jsx";
 
 export const useProducts = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-    const {dispatch} = useProduct();
+    const {dispatch} = useProductContext();
+    const {user} = useAuth();
+
+    /* To get Authorization header */
+    const getAuthHeader = () => {
+        const token = user?.token;
+        return {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
 
     /* To get all the products */
     async function getProducts() {
@@ -19,7 +30,7 @@ export const useProducts = () => {
             setIsLoading(false);
             setError(json.error);
         } else {
-            dispatch({type: 'GET_PRODUCTS', payload: json});
+            dispatch({type: 'SET_PRODUCTS', payload: json});
             setIsLoading(false);
             setError(null);
         }
@@ -33,11 +44,12 @@ export const useProducts = () => {
 
         const response = await fetch(`${BASE_URL}/product`, {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
+            headers: getAuthHeader(),
             body: JSON.stringify({productName, price, quantity, category}),
         })
 
         const json = await response.json();
+        // console.log(`Successfully added: ${JSON.stringify(json)}`);
 
         if (!response.ok) {
             setIsLoading(false);
@@ -51,7 +63,37 @@ export const useProducts = () => {
 
 
     /* To update the product Details */
-    async function updateProduct(productId) {
+    async function updateProduct(productId, updatedFields) {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const response = await fetch(`${BASE_URL}/product/${productId}`, {
+                method: "PATCH",
+                headers: getAuthHeader(),
+                body: JSON.stringify(updatedFields),
+            });
+
+            const json = await response.json();
+
+            if (!response.ok) {
+                setIsLoading(false);
+                setError(json.message || 'Failed to update product');
+            } else {
+                dispatch({
+                    type: 'UPDATE_PRODUCT',
+                    payload: {
+                        productId,
+                        updatedProduct: json
+                    }
+                });
+                setIsLoading(false);
+                setError(null);
+            }
+        } catch (err) {
+            setIsLoading(false);
+            setError('An error occurred while updating the product');
+        }
     }
 
 
@@ -60,11 +102,12 @@ export const useProducts = () => {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch(`${BASE_URL}/${productId}`, {
+        const response = await fetch(`${BASE_URL}/product/${productId}`, {
             method: "DELETE",
-            headers: {'Content-Type': 'application/json'}
+            headers: getAuthHeader(),
         })
         const json = await response.json();
+        // console.log(json)
 
         if (!response.ok) {
             setIsLoading(false);

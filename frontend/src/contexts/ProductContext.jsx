@@ -2,22 +2,32 @@ import {createContext, useContext, useReducer} from "react";
 
 const initialState = {
     products: []
-}
+};
 
 export const reducer = (state = initialState, action) => {
     switch (action.type) {
         case 'SET_PRODUCTS':
-            return {products: action.payload}
+            return {...state, products: action.payload};
         case 'ADD_PRODUCT':
-            return {products: [...state.products, action.payload]}
+            return {...state, products: [action.payload, ...state.products]};
         case 'DELETE_PRODUCT':
-            return {products: state.products.filter(product => product.id !== action.payload)}
-        case 'EDIT_PRODUCT':
-            return {...state}
+            return {
+                ...state,
+                products: state.products.filter(product => product._id !== action.payload)
+            };
+        case 'UPDATE_PRODUCT':
+            return {
+                ...state,
+                products: state.products.map(product =>
+                    product._id === action.payload.productId
+                        ? {...product, ...action.payload.updatedProduct}
+                        : product
+                )
+            };
         default:
             return state;
     }
-}
+};
 
 export const ProductContext = createContext(initialState);
 
@@ -29,12 +39,12 @@ export const ProductContextProvider = ({children}) => {
             {children}
         </ProductContext.Provider>
     );
-}
+};
 
-export const useProduct = () => {
-    const productContext = useContext(ProductContext);
-    if (!productContext) {
-        throw Error('useProductContext must be used inside an ProductContextProvider');
+export const useProductContext = () => {
+    const context = useContext(ProductContext);
+    if (!context) {
+        throw new Error('useProduct must be used within a ProductContextProvider');
     }
-    return productContext;
-}
+    return context;
+};
