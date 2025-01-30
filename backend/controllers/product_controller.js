@@ -44,7 +44,9 @@ const postProduct = async (req, res) => {
 
         await newProduct.save();
 
-        return res.status(201).json(newProduct);
+        const populatedProduct = await Product.findById(newProduct._id).populate('user', 'name');
+
+        return res.status(201).json(populatedProduct);
     } catch (err) {
         console.error(err);
         return res.status(500).json({message: err.message});
