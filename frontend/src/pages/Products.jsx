@@ -21,7 +21,7 @@ const Products = () => {
         >
             {error ? <Error error={error}/> :
                 <div className='flex flex-col items-center justify-center gap-4  mb-12'>
-                    <h1 className='font-bold text-gray-800 uppercase tracking-normal text-xl font-[Roboto]'>Products</h1>
+                    <h1 className='font-bold text-gray-800 uppercase tracking-normal text-xl tracking-widest'>Products</h1>
                     {!isLoading ? <ul className='flex flex-wrap items-start justify-center gap-6 '>
                         {products.map(({category, price, productName, quantity, user, _id}) => <Product key={_id}
                                                                                                         category={category}
@@ -34,7 +34,7 @@ const Products = () => {
                 </div>}
 
             <div className='w-5xl flex flex-col items-center justify-center gap-4 overflow-y-visible mb-8'>
-                <h1 className='font-bold text-gray-800 uppercase tracking-normal text-xl font-[Roboto]'>
+                <h1 className='font-bold text-gray-800 uppercase tracking-normal text-xl tracking-widest'>
                     Add Product
                 </h1>
                 <AddProductForm/>

@@ -15,10 +15,10 @@ const UserProductItem = ({category, productId, productName, price, quantity}) =>
     };
 
     return (
-        <li className='flex items-center justify-center p-2 bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors'>
+        <li className='flex items-center justify-center p-2 bg-white border-b border-gray-100 hover:bg-gray-100 transition-colors'>
             <div className='flex-1'>
-                <h3 className='text-lg font-medium text-gray-800'>{productName} - <strong
-                    className='text-gray-800 text-sm'>{quantity.toLocaleString()}</strong></h3>
+                <h3 className='text-sm font-medium text-gray-800'>{productName} - <strong
+                    className='text-gray-800 text-xs'>{quantity.toLocaleString()}</strong></h3>
             </div>
 
             <div className='flex justify-around items-center gap-1'>
@@ -26,7 +26,7 @@ const UserProductItem = ({category, productId, productName, price, quantity}) =>
                     onClick={() => setIsModalOpen(true)}
                     title="Edit product"
                 >
-                    <MdModeEditOutline className="text-slate-800 hover:text-slate-600 text-2xl"/>
+                    <MdModeEditOutline className="text-slate-800 hover:text-blue-600 text-2xl"/>
                 </LinkButton>
 
 
@@ -35,7 +35,7 @@ const UserProductItem = ({category, productId, productName, price, quantity}) =>
                     disabled={isLoading}
                     title="Delete product"
                 >
-                    <MdOutlineDelete className='text-slate-800 text-2xl hover:text-slate-600'/>
+                    <MdOutlineDelete className='text-slate-800 text-2xl hover:text-red-600'/>
                 </LinkButton>
             </div>
             <EditProductModal

@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import User from "../models/user.js";
 import {createToken} from "../config/createToken.js";
+import Product from "../models/product.js";
 
 const postSignup = async (req, res) => {
 
@@ -73,5 +74,40 @@ const postLogin = async (req, res) => {
     }
 }
 
+const updateUser = async (req, res) => {
 
-export {postLogin, postSignup}
+    /*
+        CODE FLOW:
+        1. Get the userId from the req.params
+        2. Get the user from the userId and check the ownership
+        3. Execute FindByIdAndUpdate with userId and req.body
+        4. If it results in error - throw error else send response
+    */
+
+    try {
+        const {userId} = req.params;
+        // console.log(`Inside the updateUser controller : ${userId}`);
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({message: 'User not found'});
+        }
+
+        const products = await Product.find().populate("user");
+        const userProducts = products.filter(({user}) => user._id.toString() === userId);
+        // console.log(userProducts);
+
+        const updatedUser = await User.findByIdAndUpdate(userId, {...req.body, products: userProducts}, {
+            new: true,
+            runValidators: true
+        }).select('-password');
+
+        return res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: err.message});
+    }
+}
+
+
+export {postLogin, postSignup, updateUser}

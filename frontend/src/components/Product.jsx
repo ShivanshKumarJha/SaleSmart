@@ -64,7 +64,7 @@ const Product = ({productName, category, price, quantity, userName, productId}) 
                     onClick={() => setIsModalOpen(true)}
                     title="Edit product"
                 >
-                    <MdModeEditOutline className="text-slate-800 hover:text-slate-600 text-xl"/>
+                    <MdModeEditOutline className="text-slate-800 hover:text-blue-600 text-xl"/>
                 </LinkButton>
 
 
@@ -73,7 +73,7 @@ const Product = ({productName, category, price, quantity, userName, productId}) 
                     disabled={isLoading}
                     title="Delete product"
                 >
-                    <MdOutlineDelete className='text-slate-800 text-xl hover:text-slate-600'/>
+                    <MdOutlineDelete className='text-slate-800 text-xl hover:text-red-600'/>
                 </LinkButton>
             </div>
 

@@ -13,11 +13,16 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
-    backgroundColor: 'background.paper',
-    border: '2px solid #000',
+    maxHeight: '90vh',
+    overflowY: 'auto',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    outline: '2px solid gray',
+    outlineOffset: -3,
+    border: '2px solid white',
     borderRadius: '5px',
     boxShadow: 24,
     p: 4,
+    backdropFilter: 'blur(4px)',
 };
 
 const EditProductModal = ({open, onClose, productId, initialData}) => {
@@ -57,6 +62,14 @@ const EditProductModal = ({open, onClose, productId, initialData}) => {
             onClose={onClose}
             aria-labelledby="edit-product-modal"
             aria-describedby="edit-product-form"
+            slotProps={{
+                backdrop: {
+                    style: {
+                        backdropFilter: 'blur(5px)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    }
+                }
+            }}
         >
             <Fade in={open}>
                 <Box sx={style}>

@@ -14,10 +14,10 @@ const ProductDetails = ({userId}) => {
         <div className='w-auto bg-white rounded-xl shadow-lg flex flex-col'>
             <div className='p-6 border-b border-gray-100'>
                 <div className='flex justify-between items-center'>
-                    <h1 className='text-xl font-semibold text-gray-800'>
+                    <h1 className='text-lg font-semibold text-gray-800'>
                         My Products ({userProducts.length})
                     </h1>
-                    <div className='text-sm bg-gray-100 px-3 py-1 rounded-full'>
+                    <div className='text-sm bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200'>
                         Total Value: {' '}
                         <span className='font-semibold text-green-600'>
                             ₹{totalValue.toLocaleString()}

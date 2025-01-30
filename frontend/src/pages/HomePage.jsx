@@ -7,7 +7,7 @@ import {useAuth} from "../hooks/useAuth.jsx";
 const HomePage = () => {
     const {isAuthenticated} = useAuth();
     return (
-        <div className='flex flex-col justify-center min-h-screen font-[Open Sans]'>
+        <div className='flex flex-col justify-center min-h-screen font-[Open Sans] w-full'>
             <Header/>
 
             <main className='flex flex-col grow items-center justify-center relative min-h-[calc(100vh-160px)]'>
@@ -15,14 +15,14 @@ const HomePage = () => {
                     className="absolute inset-0 -z-20 opacity-20 bg-[url('/src/assets/bg.png')] bg-cover bg-center bg-no-repeat"></div>
 
                 <div className="flex flex-col items-center justify-center text-center z-10 space-y-6 px-4">
-                    <h1 className='text-4xl md:text-5xl font-bold text-gray-800 tracking-tight'>
+                    <h1 className='text-4xl md:text-6xl font-bold text-gray-800 tracking-tight'>
                         Welcome to{' '}
                         <span className='bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent'>
                             SaleSmart
                         </span>
                     </h1>
 
-                    <p className='text-lg font-semibold md:text-xl text-gray-600 max-w-2xl'>
+                    <p className='text-lg font-semibold md:text-xl text-gray-600 max-w-xl'>
                         Intelligent inventory management meets seamless sales tracking
                     </p>
 

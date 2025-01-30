@@ -30,7 +30,7 @@ const LoginForm = () => {
 
     return (
         <form className='flex flex-col justify-center gap-4' method='POST' onSubmit={handleSubmit}>
-            <h1 className='text-xl font-bold text-center uppercase'>Login form</h1>
+            <h1 className='text-xl font-bold text-center uppercase tracking-widest'>Login form</h1>
 
             <input type='text' name='email' placeholder='Email' value={email}
                    onChange={(e) => setEmail(e.target.value)}
