@@ -9,6 +9,7 @@ import {useProductContext} from "../contexts/ProductContext.jsx";
 const Products = () => {
     const {products, isLoading, error} = useProductContext();
     const {getProducts} = useProducts();
+    // console.log(products);
 
     useEffect(() => {
         getProducts();

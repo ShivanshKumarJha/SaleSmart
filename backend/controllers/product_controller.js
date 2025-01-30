@@ -108,7 +108,7 @@ const deleteProduct = async (req, res) => {
             return res.status(403).json({message: 'Unauthorized access'});
         }
 
-        const deletedProduct = await Product.findOneAndDelete(productId);
+        const deletedProduct = await Product.findByIdAndDelete(productId);
         return res.status(200).json(deletedProduct);
 
     } catch (err) {

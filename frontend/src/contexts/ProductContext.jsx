@@ -46,6 +46,5 @@ export const useProductContext = () => {
     if (!context) {
         throw new Error('useProduct must be used within a ProductContextProvider');
     }
-    console.log(context)
     return context;
 };
