@@ -9,6 +9,7 @@ const Header = () => {
     const {logout} = useLogout();
     const toNav = isAuthenticated ? 'Logout' : 'Login';
     const toNavigate = isAuthenticated ? '/logout' : '/login';
+    const {user} = useAuth();
 
     return (
         <header
@@ -19,6 +20,7 @@ const Header = () => {
             <ul className='flex items-center justify-between space-x-4 sm:text-lg md:text-xl'>
                 <LinkButton to='/'>Home</LinkButton>
                 {isAuthenticated && <LinkButton to='/app/product'>Products</LinkButton>}
+                {isAuthenticated && <LinkButton to={`/app/user/${user.user._id}`}>{user.user?.name}</LinkButton>}
                 {!isAuthenticated ? <LinkButton to={toNavigate}>{toNav}</LinkButton> :
                     <LinkButton onClick={logout}>Logout</LinkButton>}
             </ul>
