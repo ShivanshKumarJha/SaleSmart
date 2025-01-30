@@ -1,17 +1,6 @@
 import React, {useState} from 'react';
-import {
-    MdCategory,
-    MdCurrencyRupee,
-    MdInventory,
-    MdModeEditOutline,
-    MdOutlineDelete,
-    MdOutlineProductionQuantityLimits,
-    MdPerson
-} from "react-icons/md";
-
-import LinkButton from "./LinkButton.jsx";
+import {MdCategory, MdCurrencyRupee, MdInventory, MdOutlineProductionQuantityLimits, MdPerson} from "react-icons/md";
 import {useProducts} from '../hooks/useProducts.jsx';
-import EditProductModal from "./EditProductModal.jsx";
 
 const Product = ({productName, category, price, quantity, userName, productId}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,7 +48,8 @@ const Product = ({productName, category, price, quantity, userName, productId}) 
                 </div>
             </div>
 
-            <div className='flex justify-around items-center gap-1'>
+            {/* TODO : Will look this in future */}
+            {/*<div className='flex justify-around items-center gap-1'>
                 <LinkButton
                     onClick={() => setIsModalOpen(true)}
                     title="Edit product"
@@ -87,7 +77,7 @@ const Product = ({productName, category, price, quantity, userName, productId}) 
                     price: price.toString(),
                     quantity: quantity.toString()
                 }}
-            />
+            />*/}
         </li>
     );
 };
