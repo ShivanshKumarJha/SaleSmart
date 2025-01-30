@@ -11,23 +11,17 @@ import {
 
 import LinkButton from "./LinkButton.jsx";
 import {useProducts} from '../hooks/useProducts.jsx';
-import {useNavigate} from 'react-router-dom';
-import EditModal from "./EditModal.jsx";
+import EditProductModal from "./EditProductModal.jsx";
 
 const Product = ({productName, category, price, quantity, userName, productId}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const {deleteProduct, isLoading} = useProducts();
-    const navigate = useNavigate();
 
     const handleDelete = async () => {
         if (window.confirm('Are you sure you want to delete this product?')) {
             await deleteProduct(productId);
         }
-    };
-
-    const handleEdit = () => {
-        navigate(`/app/product/${productId}`);
     };
 
     return (
@@ -82,8 +76,8 @@ const Product = ({productName, category, price, quantity, userName, productId}) 
                     <MdOutlineDelete className='text-slate-800 text-xl hover:text-slate-600'/>
                 </LinkButton>
             </div>
-            
-            <EditModal
+
+            <EditProductModal
                 open={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 productId={productId}

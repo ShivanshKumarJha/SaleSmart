@@ -20,7 +20,7 @@ const style = {
     p: 4,
 };
 
-const EditModal = ({open, onClose, productId, initialData}) => {
+const EditProductModal = ({open, onClose, productId, initialData}) => {
     const [formData, setFormData] = useState(initialData);
     const {updateProduct, isLoading, error} = useProducts();
 
@@ -125,4 +125,4 @@ const EditModal = ({open, onClose, productId, initialData}) => {
     );
 };
 
-export default EditModal;
+export default EditProductModal;
