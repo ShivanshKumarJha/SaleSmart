@@ -5,7 +5,7 @@ import Footer from "../components/Footer.jsx";
 
 const AppLayout = () => {
     return (
-        <div className='flex flex-col justify-center font-[Open Sans]'>
+        <div className='flex flex-col justify-center font-[Open Sans] min-h-screen'>
             <Header/>
             <Outlet/>
             <Footer/>

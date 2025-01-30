@@ -1,43 +1,42 @@
-import React, {useEffect} from 'react';
-import Loader from "../components/Loader.jsx";
-import Product from '../components/Product.jsx'
-import Error from '../components/Error.jsx'
-import AddProductForm from "../components/AddProductForm.jsx";
-import {useProducts} from "../hooks/useProducts.jsx";
+import React, {useEffect, useState} from 'react';
 import {useProductContext} from "../contexts/ProductContext.jsx";
+import {useProducts} from "../hooks/useProducts.jsx";
+import ProductsHeader from "../components/ProductsHeader.jsx";
+import ProductsContent from "../components/ProductsContent.jsx";
+import AddProductModal from "../components/AddProductModal.jsx";
 
 const Products = () => {
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [query, setQuery] = useState("");
+    
     const {products, isLoading, error} = useProductContext();
     const {getProducts} = useProducts();
-    // console.log(products);
+    const totalProducts = products.reduce((acc, curr) => acc + curr.quantity, 0);
 
     useEffect(() => {
         getProducts();
     }, []);
 
     return (
-        <main
-            className='flex grow items-start justify-around gap-4 my-4 mx-4'
-        >
-            {error ? <Error error={error}/> :
-                <div className='flex flex-col items-center justify-center gap-4  mb-12'>
-                    <h1 className='font-bold text-gray-800 uppercase tracking-normal text-xl tracking-widest'>Products</h1>
-                    {!isLoading ? <ul className='flex flex-wrap items-start justify-center gap-6 '>
-                        {products.map(({category, price, productName, quantity, user, _id}) => <Product key={_id}
-                                                                                                        category={category}
-                                                                                                        price={price}
-                                                                                                        productName={productName}
-                                                                                                        quantity={quantity}
-                                                                                                        userName={user.name}
-                                                                                                        productId={_id}/>)}
-                    </ul> : <Loader/>}
-                </div>}
+        <main className="flex grow items-start justify-around gap-4 my-4 mx-4 relative">
+            <div className="w-full">
+                <ProductsHeader
+                    onAddProduct={() => setIsAddModalOpen(true)}
+                    setQuery={setQuery}
+                    productCount={totalProducts}
+                />
 
-            <div className='w-5xl flex flex-col items-center justify-center gap-4 overflow-y-visible mb-8'>
-                <h1 className='font-bold text-gray-800 uppercase tracking-normal text-xl tracking-widest'>
-                    Add Product
-                </h1>
-                <AddProductForm/>
+                <ProductsContent
+                    products={products}
+                    query={query}
+                    isLoading={isLoading}
+                    error={error}
+                />
+
+                <AddProductModal
+                    open={isAddModalOpen}
+                    onClose={() => setIsAddModalOpen(false)}
+                />
             </div>
         </main>
     );

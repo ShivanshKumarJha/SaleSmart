@@ -1,18 +1,17 @@
-import * as React from 'react';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
 import {Button, TextField} from "@mui/material";
-import {useUser} from "../hooks/useUser.jsx";
+import {useProducts} from "../hooks/useProducts.jsx";
 
 const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 350,
     maxHeight: '90vh',
     overflowY: 'auto',
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -25,42 +24,41 @@ const style = {
     backdropFilter: 'blur(4px)',
 };
 
-const EditProductModal = ({open, onClose, userId, initialData}) => {
-    const [formData, setFormData] = useState(initialData);
-    const {isLoading, error, updateUser} = useUser();
-
-    useEffect(() => {
-        if (open) {
-            setFormData(initialData);
-        }
-    }, [open, initialData]);
+const AddProductModal = ({open, onClose}) => {
+    const [formData, setFormData] = useState({
+        productName: '',
+        category: '',
+        price: '',
+        quantity: ''
+    });
+    const {addProduct, isLoading, error} = useProducts();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // console.log('Inside the handleSubmit in handleSubmit');
 
-        await updateUser(userId, {
-            email: formData.email,
-            name: formData.name,
+        await addProduct({
+            ...formData,
+            price: Number(formData.price),
+            quantity: Number(formData.quantity)
         });
-        onClose();
+
+        if (!error) {
+            onClose();
+            setFormData({productName: '', category: '', price: '', quantity: ''});
+        }
     };
 
-    /* To efficiently handle multiple input fields */
     const handleChange = (e) => {
         const {name, value} = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => ({...prev, [name]: value}));
     };
 
     return (
         <Modal
             open={open}
             onClose={onClose}
-            aria-labelledby="edit-product-modal"
-            aria-describedby="edit-product-form"
+            aria-labelledby="add-product-modal"
+            aria-describedby="add-product-form"
             slotProps={{
                 backdrop: {
                     style: {
@@ -73,23 +71,44 @@ const EditProductModal = ({open, onClose, userId, initialData}) => {
             <Fade in={open}>
                 <Box sx={style}>
                     <Typography variant="h6" component="h2" gutterBottom>
-                        Edit User
+                        Add New Product
                     </Typography>
                     <form onSubmit={handleSubmit}>
                         <TextField
                             fullWidth
-                            label="User Name"
-                            name="name"
-                            value={formData.name || ''}
+                            label="Product Name"
+                            name="productName"
+                            value={formData.productName}
                             onChange={handleChange}
                             margin="normal"
                             required
                         />
                         <TextField
                             fullWidth
-                            label="Email"
-                            name="email"
-                            value={formData.email || ''}
+                            label="Category"
+                            name="category"
+                            value={formData.category}
+                            onChange={handleChange}
+                            margin="normal"
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Price"
+                            name="price"
+                            type="number"
+                            value={formData.price}
+                            onChange={handleChange}
+                            margin="normal"
+                            inputProps={{step: "0.01"}}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Quantity"
+                            name="quantity"
+                            type="number"
+                            value={formData.quantity}
                             onChange={handleChange}
                             margin="normal"
                             required
@@ -107,7 +126,7 @@ const EditProductModal = ({open, onClose, userId, initialData}) => {
                             sx={{mt: 2}}
                             disabled={isLoading}
                         >
-                            {isLoading ? 'Updating...' : 'Update User'}
+                            {isLoading ? 'Adding...' : 'Add Product'}
                         </Button>
                     </form>
                 </Box>
@@ -116,4 +135,4 @@ const EditProductModal = ({open, onClose, userId, initialData}) => {
     );
 };
 
-export default EditProductModal;
+export default AddProductModal;

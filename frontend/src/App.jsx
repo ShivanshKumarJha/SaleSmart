@@ -25,8 +25,8 @@ const App = () => {
                     }
                 >
                     <Route index element={<Navigate replace to='product'/>}/>
-                    <Route path='user/:id' element={<User/>}/>
                     <Route path='product' element={<Products/>}/>
+                    <Route path='user/:id' element={<User/>}/>
                 </Route>
                 <Route path='*' element={<NotFound/>}/>
             </Routes>

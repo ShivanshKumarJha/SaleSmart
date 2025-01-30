@@ -1,4 +1,4 @@
-import {createContext, useEffect, useReducer} from "react";
+import {createContext, useEffect, useReducer, useState} from "react";
 
 const initialState = {
     user: null,
@@ -23,7 +23,8 @@ export const reducer = (state = initialState, action) => {
 
 /* 2. CREATING CONTEXT PROVIDER */
 export function AuthProvider({children}) {
-    const [state, dispatch] = useReducer(reducer, initialState)
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
     /* Setting the initial auth status */
     useEffect(() => {
@@ -31,10 +32,11 @@ export function AuthProvider({children}) {
         if (user) {
             dispatch({type: 'LOGIN', payload: user})
         }
+        setIsCheckingAuth(false);
     }, []);
 
     return (
-        <AuthContext.Provider value={{...state, dispatch}}>
+        <AuthContext.Provider value={{...state, dispatch, isCheckingAuth}}>
             {children}
         </AuthContext.Provider>
     );

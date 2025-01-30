@@ -17,7 +17,7 @@ const style = {
     overflowY: 'auto',
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     outline: '2px solid gray',
-    outlineOffset: -3,
+    outlineOffset: -1,
     border: '2px solid white',
     borderRadius: '5px',
     boxShadow: 24,

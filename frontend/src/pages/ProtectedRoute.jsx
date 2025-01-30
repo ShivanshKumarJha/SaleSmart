@@ -1,16 +1,21 @@
 import {useAuth} from "../hooks/useAuth.jsx";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
+import Loader from "../components/Loader.jsx";
 
 const ProtectedRoute = ({children}) => {
-    const {isAuthenticated} = useAuth();
+    const {isAuthenticated, isCheckingAuth} = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!isAuthenticated) {
+        if (!isAuthenticated && !isCheckingAuth) {
             navigate('/login');
         }
-    }, [isAuthenticated, navigate]);
+    }, [isAuthenticated, isCheckingAuth, navigate]);
+
+    if (isCheckingAuth) {
+        return <Loader/>
+    }
 
     return isAuthenticated ? children : null;
 };
