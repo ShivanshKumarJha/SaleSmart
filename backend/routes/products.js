@@ -5,7 +5,7 @@ import {isAuth} from "../middleware/isAuth.js";
 const router = express.Router();
 
 router.post('/', isAuth, postProduct);
-router.put('/:productId', isAuth, editProduct);
+router.patch('/:productId', isAuth, editProduct);
 router.delete('/:productId', isAuth, deleteProduct);
 
 export default router;

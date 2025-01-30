@@ -8,8 +8,8 @@ import {PORT} from "./config/environments.js";
 const app = express();
 const corsOptions = {
     origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'PATCH'],
-    allowedHeaders: ['Content-Type'],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
 };
 
