@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
+import {useNavigate} from "react-router-dom";
+
 import {useLogin} from "../hooks/useLogin.jsx";
 import {useAuth} from "../hooks/useAuth.jsx";
-import {useNavigate} from "react-router-dom";
 import Button from "./Button.jsx";
 
 const LoginForm = () => {
@@ -40,9 +41,21 @@ const LoginForm = () => {
                    onChange={(e) => setPassword(e.target.value)}
                    className='border border-gray-200 rounded-sm p-2 text-black w-72'/>
 
-            <Button type="submit" disabled={isLoading}>Login</Button>
+            <Button type="submit" disabled={isLoading}
+                    variant='primary'>{isLoading ? 'Logging in...' : 'Login'}</Button>
 
-            {error && <p>Some Error occurred!</p>}
+            {error && <p className="text-red-500 text-sm text-center">⚠️ {error}</p>}
+
+            <div className="mt-2 flex flex-col items-center gap-2">
+                <span className="text-gray-600 text-sm">Don&#39;t have an account?</span>
+                <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => navigate('/signup')}
+                >
+                    Create New Account
+                </Button>
+            </div>
         </form>
 
     );
