@@ -5,14 +5,15 @@ import LinkButton from "./LinkButton.jsx";
 
 const UserDetails = ({user}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    // console.log(user)
 
     return (
         <div className='w-full bg-white rounded-xl shadow-lg p-6'>
             <div className='flex flex-col items-center mb-6 space-y-4'>
-                {user.user.image?.url && (
+                {user.image?.url && (
                     <div className='relative group'>
                         <img
-                            src={user.user.image.url}
+                            src={user.image.url}
                             alt="Profile"
                             className='w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg'
                         />
@@ -23,10 +24,10 @@ const UserDetails = ({user}) => {
                 <div className='flex items-center justify-between w-full'>
                     <div className='flex flex-col gap-1'>
                         <h1 className='text-xl font-semibold text-gray-800 tracking-tight'>
-                            {user.user.name}
+                            {user.name}
                         </h1>
                         <p className='text-sm text-gray-600 font-medium'>
-                            {user.user.email}
+                            {user.email}
                         </p>
                     </div>
                     <div>
@@ -41,8 +42,8 @@ const UserDetails = ({user}) => {
                 <EditUserModal
                     open={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
-                    userId={user.user._id}
-                    initialData={user.user}
+                    userId={user._id}
+                    initialData={user}
                 />
             </div>
 
@@ -53,7 +54,7 @@ const UserDetails = ({user}) => {
                             Account Created
                         </p>
                         <p className='text-gray-700 font-semibold text-xs'>
-                            {new Date(user.user.createdAt).toLocaleDateString('en-US', {
+                            {new Date(user.createdAt).toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'short',
                                 day: 'numeric'
@@ -65,7 +66,7 @@ const UserDetails = ({user}) => {
                             Last Updated
                         </p>
                         <p className='text-gray-700 font-semibold text-xs'>
-                            {new Date(user.user.updatedAt).toLocaleDateString('en-US', {
+                            {new Date(user.updatedAt).toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'short',
                                 day: 'numeric'

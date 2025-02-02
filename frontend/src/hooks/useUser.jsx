@@ -1,7 +1,7 @@
-import {useState} from "react";
-import {useAuth} from "./useAuth.jsx";
-import BASE_URL from "../constants/BASE_URL.js";
-import {useLocalStorage} from "./useLocalStorage.jsx";
+import {useState} from 'react';
+import {useAuth} from './useAuth.jsx';
+import BASE_URL from '../constants/BASE_URL.js';
+import {useLocalStorage} from './useLocalStorage.jsx';
 
 export const useUser = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -13,20 +13,18 @@ export const useUser = () => {
     const updateUser = async (userId, updatedFields) => {
         setIsLoading(true);
         setError(null);
-        // console.log(`Inside the updateUser : ${JSON.stringify(updatedFields)} and userId : ${userId}`);
 
         try {
             const response = await fetch(`${BASE_URL}/user/${userId}`, {
-                method: "PATCH",
+                method: 'PATCH',
                 headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(updatedFields),
-            })
+                body: updatedFields,
+            });
 
             const json = await response.json();
-            // console.log(`JSON DATA IS : ${json}`)
+            //   console.log('Updated User Response:', json);
 
             if (!response.ok) {
                 setIsLoading(false);
@@ -37,12 +35,12 @@ export const useUser = () => {
                 setIsLoading(false);
                 setError(null);
             }
-
         } catch (err) {
-            setIsLoading(false);
             setError('An error occurred while updating the user');
+        } finally {
+            setIsLoading(false);
         }
-    }
+    };
 
     return {isLoading, error, updateUser};
-}
+};

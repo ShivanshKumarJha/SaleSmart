@@ -4,8 +4,8 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
-import {Button, TextField} from "@mui/material";
-import {useUser} from "../hooks/useUser.jsx";
+import {Button, TextField} from '@mui/material';
+import {useUser} from '../hooks/useUser.jsx';
 
 const style = {
     position: 'absolute',
@@ -25,34 +25,47 @@ const style = {
     backdropFilter: 'blur(4px)',
 };
 
-const EditProductModal = ({open, onClose, userId, initialData}) => {
+const EditUserModal = ({open, onClose, userId, initialData}) => {
     const [formData, setFormData] = useState(initialData);
+    const [imageFile, setImageFile] = useState(null);
     const {isLoading, error, updateUser} = useUser();
 
     useEffect(() => {
         if (open) {
             setFormData(initialData);
+            setImageFile(null);
         }
     }, [open, initialData]);
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async e => {
         e.preventDefault();
-        // console.log('Inside the handleSubmit in handleSubmit');
+        // console.log(`Current user is :`, formData);
 
-        await updateUser(userId, {
-            email: formData.email,
-            name: formData.name,
-        });
+        const formPayload = new FormData();
+        formPayload.append('name', formData.name);
+        formPayload.append('email', formData.email);
+        if (imageFile) {
+            formPayload.append('image', imageFile);
+        }
+
+        // console.log('Form Payload:', formPayload);
+        await updateUser(userId, formPayload);
         onClose();
     };
 
-    /* To efficiently handle multiple input fields */
-    const handleChange = (e) => {
+    const handleChange = e => {
         const {name, value} = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: value,
         }));
+    };
+
+    const handleImageChange = e => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageFile(file);
+        }
     };
 
     return (
@@ -66,8 +79,8 @@ const EditProductModal = ({open, onClose, userId, initialData}) => {
                     style: {
                         backdropFilter: 'blur(5px)',
                         backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                    }
-                }
+                    },
+                },
             }}
         >
             <Fade in={open}>
@@ -95,6 +108,45 @@ const EditProductModal = ({open, onClose, userId, initialData}) => {
                             required
                         />
 
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: 1,
+                            }}
+                        >
+                            <input
+                                type="file"
+                                name="image"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                style={{display: 'none'}}
+                                id="profile-photo-upload"
+                            />
+                            <label htmlFor="profile-photo-upload">
+                                <Button
+                                    variant="outlined"
+                                    component="span"
+                                    size="small"
+                                    sx={{
+                                        textTransform: 'none',
+                                        borderColor: 'divider',
+                                        '&:hover': {
+                                            borderColor: 'primary.main',
+                                        },
+                                    }}
+                                >
+                                    Change Photo
+                                </Button>
+                            </label>
+                            {imageFile && (
+                                <Typography variant="caption" sx={{color: 'text.secondary'}}>
+                                    Selected: {imageFile.name}
+                                </Typography>
+                            )}
+                        </Box>
+
                         {error && (
                             <Typography color="error" variant="body2" sx={{mt: 1}}>
                                 {error}
@@ -106,6 +158,7 @@ const EditProductModal = ({open, onClose, userId, initialData}) => {
                             variant="contained"
                             sx={{mt: 2}}
                             disabled={isLoading}
+                            className='w-full'
                         >
                             {isLoading ? 'Updating...' : 'Update User'}
                         </Button>
@@ -116,4 +169,4 @@ const EditProductModal = ({open, onClose, userId, initialData}) => {
     );
 };
 
-export default EditProductModal;
+export default EditUserModal;

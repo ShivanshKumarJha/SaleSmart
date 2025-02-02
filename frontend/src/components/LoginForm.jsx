@@ -25,8 +25,7 @@ const LoginForm = () => {
                 navigate('/app');
             }
         },
-        [isAuthenticated, navigate],
-        {replace: true}
+        [isAuthenticated, navigate]
     );
 
     return (
