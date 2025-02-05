@@ -1,7 +1,7 @@
 import {Sort, Tune} from "@mui/icons-material";
 import React from "react";
 
-const SearchControls = ({setQuery, onOpenFilters, isFilter}) => (
+const SearchControls = ({setQuery, onOpenFilters, isFilter, onOpenSort, isSort}) => (
     <div className="relative w-full max-w-2xl">
         <input
             onChange={(e) => setQuery(e.target.value.toLowerCase())}
@@ -17,7 +17,9 @@ const SearchControls = ({setQuery, onOpenFilters, isFilter}) => (
                 <Tune className='text-gray-600' fontSize="small"/>
             </button>
             <div className="h-6 w-px bg-gray-200 my-auto"></div>
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer">
+            <button
+                onClick={onOpenSort}
+                className={`p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer ${isSort ? 'bg-slate-200 rounded-lg' : ''}`}>
                 <Sort className="text-gray-600" fontSize="small"/>
             </button>
         </div>

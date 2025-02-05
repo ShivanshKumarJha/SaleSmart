@@ -5,6 +5,7 @@ import ProductsHeader from '../components/ProductsHeader.jsx';
 import ProductsContent from '../components/ProductsContent.jsx';
 import AddProductModal from '../components/AddProductModal.jsx';
 import FilterModal from "../components/FilterModal.jsx";
+import SortModal from "../components/SortModal.jsx";
 
 const Products = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -12,11 +13,15 @@ const Products = () => {
     const [filterOption, setFilterOption] = useState('');
     const [filterVal, setFilterVal] = useState('');
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+    const [sortBy, setSortBy] = useState('');
+    const [sortOrder, setSortOrder] = useState('asc');
+    const [isSortModalOpen, setIsSortModalOpen] = useState(false);
 
     const {products, isLoading, error} = useProductContext();
     const {getProducts} = useProducts();
     const totalProducts = products.reduce((acc, curr) => acc + curr.quantity, 0);
     const isFilter = filterOption.length > 0 && filterVal.length > 0;
+    const isSort = sortBy.length > 0;
 
     useEffect(() => {
         getProducts();
@@ -31,6 +36,8 @@ const Products = () => {
                     productCount={totalProducts}
                     onOpenFilters={() => setIsFilterModalOpen(true)}
                     isFilter={isFilter}
+                    onOpenSort={() => setIsSortModalOpen(true)}
+                    isSort={isSort}
                 />
 
                 <ProductsContent
@@ -40,6 +47,8 @@ const Products = () => {
                     error={error}
                     filterOption={filterOption}
                     filterValue={filterVal}
+                    sortValue={sortBy}
+                    sortOrder={sortOrder}
                 />
 
                 <AddProductModal
@@ -54,6 +63,15 @@ const Products = () => {
                     setFilterOption={setFilterOption}
                     filterVal={filterVal}
                     setFilterVal={setFilterVal}
+                />
+
+                <SortModal
+                    open={isSortModalOpen}
+                    onClose={() => setIsSortModalOpen(false)}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    sortOrder={sortOrder}
+                    setSortOrder={setSortOrder}
                 />
             </div>
         </main>

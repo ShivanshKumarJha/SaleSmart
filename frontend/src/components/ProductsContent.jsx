@@ -1,7 +1,10 @@
 import Product from "./Product.jsx";
 import Loader from "./Loader.jsx";
+import Error from "./Error.jsx";
 
-const ProductsContent = ({products, query, isLoading, error, filterOption, filterValue}) => {
+const ProductsContent = ({products, query, isLoading, error, filterOption, filterValue, sortValue, sortOrder}) => {
+    if (error) return <Error error={error}/>
+
     const filteredProducts = products.filter(product => {
         const productName = product.productName?.toLowerCase() || '';
         const adminName = product.user.name?.toLowerCase() || '';
@@ -29,11 +32,27 @@ const ProductsContent = ({products, query, isLoading, error, filterOption, filte
         return matchesSearch && matchesFilter;
     });
 
+    const finalProducts = [...filteredProducts].sort((a, b) => {
+        let comparison = 0;
+
+        if (sortValue === "price") {
+            comparison = a.price - b.price;
+        } else if (sortValue === "quantity") {
+            comparison = a.quantity - b.quantity;
+        } else if (sortValue === "date") {
+            comparison = new Date(a.updatedAt) - new Date(b.updatedAt);
+        }
+
+        return sortOrder === "asc" ? comparison : -comparison;
+    });
+
+    console.log(finalProducts);
+
     return (
         <div className='flex flex-col items-center justify-center gap-4 mb-12'>
             {!isLoading ? (
                 <ul className='flex flex-wrap items-start justify-around gap-6'>
-                    {filteredProducts.filter((product) =>
+                    {finalProducts.filter((product) =>
                         product.productName.toLowerCase().includes(query)
                     ).map((product) => (
                         <Product key={product._id} {...product} userName={product.user.name.split(' ')[0]}/>
