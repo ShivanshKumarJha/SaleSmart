@@ -6,6 +6,7 @@ import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
 import {Button, TextField} from '@mui/material';
 import {useUser} from '../hooks/useUser.jsx';
+import {toast} from "react-toastify";
 
 const style = {
     position: 'absolute',
@@ -48,9 +49,13 @@ const EditUserModal = ({open, onClose, userId, initialData}) => {
             formPayload.append('image', imageFile);
         }
 
-        // console.log('Form Payload:', formPayload);
-        await updateUser(userId, formPayload);
-        onClose();
+        try {
+            await updateUser(userId, formPayload);
+            toast.success("User updated successfully!");
+            onClose();
+        } catch (err) {
+            toast.error("Failed to update user. Please try again.");
+        }
     };
 
     const handleChange = e => {

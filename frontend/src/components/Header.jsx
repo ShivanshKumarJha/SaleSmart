@@ -11,7 +11,6 @@ const Header = () => {
     const toNavigate = isAuthenticated ? '/logout' : '/login';
     const {user} = useAuth();
     const firstName = user?.user?.name?.split(' ')[0];
-    // console.log(firstName);
 
     return (
         <header

@@ -1,10 +1,15 @@
 import React from 'react';
 import {useProductContext} from "../contexts/ProductContext.jsx";
 import UserProductItem from "./UserProductItem.jsx";
+import Loader from "./Loader.jsx";
 
 const ProductDetails = ({userId}) => {
-    const {products} = useProductContext();
+    const {products, isLoading} = useProductContext();
     const userProducts = products.filter((product) => product.user._id === userId);
+
+    if (isLoading) {
+        return <Loader/>;
+    }
 
     const totalValue = userProducts.reduce(
         (sum, product) => sum + (product.price * product.quantity), 0

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import ProtectedRoute from "./pages/ProtectedRoute.jsx";
 import HomePage from "./pages/HomePage.jsx";
@@ -8,8 +8,14 @@ import AppLayout from "./pages/AppLayout.jsx";
 import Products from "./pages/Products.jsx";
 import User from "./pages/User.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import {useProducts} from "./hooks/useProducts.jsx";
 
 const App = () => {
+    const {getProducts} = useProducts();
+    useEffect(() => {
+        getProducts().then(() => console.log('Got all products'));
+    }, []);
+
     return (
         <BrowserRouter>
             <Routes>

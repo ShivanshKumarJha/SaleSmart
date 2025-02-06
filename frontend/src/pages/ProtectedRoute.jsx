@@ -1,7 +1,6 @@
 import {useAuth} from "../hooks/useAuth.jsx";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
-import Loader from "../components/Loader.jsx";
 
 const ProtectedRoute = ({children}) => {
     const {isAuthenticated, isCheckingAuth} = useAuth();
@@ -12,10 +11,6 @@ const ProtectedRoute = ({children}) => {
             navigate('/login');
         }
     }, [isAuthenticated, isCheckingAuth, navigate]);
-
-    if (isCheckingAuth) {
-        return <Loader/>
-    }
 
     return isAuthenticated ? children : null;
 };

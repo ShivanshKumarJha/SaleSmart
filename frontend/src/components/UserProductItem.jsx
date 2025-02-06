@@ -3,14 +3,23 @@ import {useProducts} from '../hooks/useProducts.jsx';
 import {MdModeEditOutline, MdOutlineDelete} from 'react-icons/md';
 import LinkButton from "./LinkButton.jsx";
 import EditProductModal from "./EditProductModal.jsx";
+import {toast} from "react-toastify";
 
 const UserProductItem = ({category, productId, productName, price, quantity}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const {deleteProduct, isLoading} = useProducts();
 
     const handleDelete = async () => {
         if (window.confirm('Are you sure you want to delete this product?')) {
-            await deleteProduct(productId);
+            setIsDeleting(true);
+            try {
+                await deleteProduct(productId);
+                toast.success("Product deleted successfully!");
+            } catch (err) {
+                toast.error("Failed to delete product.");
+            }
+            setIsDeleting(false);
         }
     };
 

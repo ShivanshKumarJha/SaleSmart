@@ -6,6 +6,7 @@ import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
 import {Button, TextField} from "@mui/material";
 import {useProducts} from "../hooks/useProducts.jsx";
+import {toast} from "react-toastify";
 
 const style = {
     position: 'absolute',
@@ -38,13 +39,19 @@ const EditProductModal = ({open, onClose, productId, initialData}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        await updateProduct(productId, {
-            productName: formData.productName,
-            category: formData.category,
-            price: Number(formData.price),
-            quantity: Number(formData.quantity)
-        });
-        onClose();
+        try {
+            await updateProduct(productId, {
+                productName: formData.productName,
+                category: formData.category,
+                price: Number(formData.price),
+                quantity: Number(formData.quantity)
+            });
+
+            toast.success("Product updated successfully!");
+            onClose();
+        } catch (err) {
+            toast.error("Failed to update product. Please try again.");
+        }
     };
 
     /* To efficiently handle multiple input fields */

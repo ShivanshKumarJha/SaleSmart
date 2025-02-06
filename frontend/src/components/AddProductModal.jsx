@@ -4,6 +4,7 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
 import {Button, TextField} from "@mui/material";
+import {toast} from "react-toastify";
 import {useProducts} from "../hooks/useProducts.jsx";
 
 const style = {
@@ -36,17 +37,21 @@ const AddProductModal = ({open, onClose}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        await addProduct({
-            ...formData,
-            price: Number(formData.price),
-            quantity: Number(formData.quantity)
-        });
+        try {
+            await addProduct({
+                ...formData,
+                price: Number(formData.price),
+                quantity: Number(formData.quantity)
+            });
 
-        if (!error) {
+            toast.success("Product added successfully!");
             onClose();
             setFormData({productName: '', category: '', price: '', quantity: ''});
+        } catch (err) {
+            toast.error("Failed to add product. Please try again.");
         }
     };
+
 
     const handleChange = (e) => {
         const {name, value} = e.target;

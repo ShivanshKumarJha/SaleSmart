@@ -1,9 +1,13 @@
 import Product from "./Product.jsx";
-import Loader from "./Loader.jsx";
 import Error from "./Error.jsx";
+import Loader from "./Loader.jsx";
 
 const ProductsContent = ({products, query, isLoading, error, filterOption, filterValue, sortValue, sortOrder}) => {
     if (error) return <Error error={error}/>
+
+    if (isLoading) {
+        return <Loader/>
+    }
 
     const filteredProducts = products.filter(product => {
         const productName = product.productName?.toLowerCase() || '';
@@ -50,17 +54,13 @@ const ProductsContent = ({products, query, isLoading, error, filterOption, filte
 
     return (
         <div className='flex flex-col items-center justify-center gap-4 mb-12'>
-            {!isLoading ? (
-                <ul className='flex flex-wrap items-start justify-around gap-6'>
-                    {finalProducts.filter((product) =>
-                        product.productName.toLowerCase().includes(query)
-                    ).map((product) => (
-                        <Product key={product._id} {...product} userName={product.user.name.split(' ')[0]}/>
-                    ))}
-                </ul>
-            ) : (
-                <Loader/>
-            )}
+            <ul className='flex flex-wrap items-start justify-around gap-6'>
+                {finalProducts.filter((product) =>
+                    product.productName.toLowerCase().includes(query)
+                ).map((product) => (
+                    <Product key={product._id} {...product} userName={product.user.name.split(' ')[0]}/>
+                ))}
+            </ul>
         </div>
     );
 };
