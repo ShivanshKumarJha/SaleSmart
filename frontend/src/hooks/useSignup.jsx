@@ -1,11 +1,11 @@
-import {useContext, useState} from 'react';
-import {AuthContext} from '../contexts/AuthContext.jsx';
+import {useState} from 'react';
 import BASE_URL from '../constants/BASE_URL.js';
+import {useNavigate} from "react-router-dom";
 
 export const useSignup = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const {dispatch} = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const signup = async formData => {
         setIsLoading(true);
@@ -15,6 +15,7 @@ export const useSignup = () => {
             const response = await fetch(`${BASE_URL}/user/signup`, {
                 method: 'POST',
                 body: formData,
+                credentials: 'include',
             });
 
             const json = await response.json();
@@ -23,8 +24,15 @@ export const useSignup = () => {
                 throw new Error(json.message || 'Signup failed');
             }
 
-            localStorage.setItem('user', JSON.stringify(json));
-            dispatch({type: 'LOGIN', payload: json});
+            navigate('/verify-otp', {
+                state: {
+                    email: json.email,
+                    tempData: {
+                        name: json.tempData?.name,
+                        image: json.tempData?.image
+                    }
+                }
+            });
         } catch (err) {
             setError(err.message || 'An error occurred during signup');
         } finally {
