@@ -50,7 +50,7 @@ const ProductsContent = ({products, query, isLoading, error, filterOption, filte
         return sortOrder === "asc" ? comparison : -comparison;
     });
 
-    console.log(finalProducts);
+    // console.log(finalProducts);
 
     return (
         <div className='flex flex-col items-center justify-center gap-4 mb-12'>

@@ -5,56 +5,48 @@ import {useSignup} from '../hooks/useSignup.jsx';
 import Button from './Button.jsx';
 
 const SignupForm = () => {
-    const [formData, setFormData] = useState({
+    const [formValues, setFormValues] = useState({
         name: '',
         email: '',
         password: '',
-        confirm_password: '',
-        image: null,
+        confirmPassword: ''
     });
-
+    const [profileImage, setProfileImage] = useState(null);
     const [validationError, setValidationError] = useState('');
 
     const {signup, isLoading, error} = useSignup();
     const {isAuthenticated} = useAuth();
     const navigate = useNavigate();
 
-    const handleChange = e => {
-        const {name, value, files} = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: files ? files[0] : value,
-        }));
-    };
-
-    const handleSubmit = async e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setValidationError('');
 
-        if (
-            !formData.name ||
-            !formData.email ||
-            !formData.password ||
-            !formData.confirm_password
-        ) {
+        if (!formValues.name || !formValues.email ||
+            !formValues.password || !formValues.confirmPassword) {
             return setValidationError('Please fill all required fields');
         }
-        if (formData.password !== formData.confirm_password) {
+
+        if (formValues.password !== formValues.confirmPassword) {
             return setValidationError('Passwords do not match');
         }
 
-        const newUser = new FormData();
-        newUser.append('name', formData.name);
-        newUser.append('email', formData.email);
-        newUser.append('password', formData.password);
-        newUser.append('confirm_password', formData.confirm_password);
-        if (formData.image) {
-            newUser.append('image', formData.image);
+        const formData = new FormData();
+        formData.append('name', formValues.name);
+        formData.append('email', formValues.email);
+        formData.append('password', formValues.password);
+        formData.append('confirm_password', formValues.confirmPassword);
+        if (profileImage) {
+            formData.append('image', profileImage);
         }
-        // console.log(newUser)
 
-        await signup(newUser);
-        navigate('/login');
+        await signup(formData);
+    };
+
+    const handleImageChange = (e) => {
+        if (e.target.files[0]) {
+            setProfileImage(e.target.files[0]);
+        }
     };
 
     useEffect(() => {
@@ -74,40 +66,36 @@ const SignupForm = () => {
 
             <input
                 type="text"
-                name="name"
                 placeholder="Full Name"
-                value={formData.name}
-                onChange={handleChange}
+                value={formValues.name}
+                onChange={(e) => setFormValues({...formValues, name: e.target.value})}
                 className="border border-gray-200 rounded-sm p-2 text-black w-72"
                 required
             />
 
             <input
                 type="email"
-                name="email"
                 placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
+                value={formValues.email}
+                onChange={(e) => setFormValues({...formValues, email: e.target.value})}
                 className="border border-gray-200 rounded-sm p-2 text-black w-72"
                 required
             />
 
             <input
                 type="password"
-                name="password"
                 placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
+                value={formValues.password}
+                onChange={(e) => setFormValues({...formValues, password: e.target.value})}
                 className="border border-gray-200 rounded-sm p-2 text-black w-72"
                 required
             />
 
             <input
                 type="password"
-                name="confirm_password"
                 placeholder="Confirm Password"
-                value={formData.confirm_password}
-                onChange={handleChange}
+                value={formValues.confirmPassword}
+                onChange={(e) => setFormValues({...formValues, confirmPassword: e.target.value})}
                 className="border border-gray-200 rounded-sm p-2 text-black w-72"
                 required
             />
@@ -118,9 +106,8 @@ const SignupForm = () => {
                 </label>
                 <input
                     type="file"
-                    name="image"
+                    onChange={handleImageChange}
                     accept="image/*"
-                    onChange={handleChange}
                     className="border border-gray-200 rounded-sm p-2 text-black w-72"
                 />
             </div>
