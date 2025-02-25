@@ -1,9 +1,14 @@
-import bcrypt from 'bcrypt';
-import User from '../models/user.js';
-import {createToken} from '../config/createToken.js';
 import cloudinary from 'cloudinary';
-import {uploadToCloudinary} from '../config/cloudinary.js';
+import bcrypt from "bcrypt";
 import * as fs from 'node:fs';
+
+import User from '../models/user.js';
+import Otp from "../models/otp.js";
+
+import {createToken} from '../config/createToken.js';
+import {uploadToCloudinary} from '../config/cloudinary.js';
+import {sendVerificationEmail} from "../config/nodemailer.js";
+import {BASE_URL} from "../utils/BASE_URL.js";
 
 const postSignup = async (req, res) => {
     /*
@@ -11,10 +16,11 @@ const postSignup = async (req, res) => {
           1. Extract name, email, password, confirm_password from req.body.
           2. Check if password === confirm_password -> if not throw error
           3. Also check if the user email exists -> if it exists then throw error
-          4. If an image is uploaded:
-              - Upload to Cloudinary, store publicId & url.
-          6. Hash the password and create a new user in DB.
-          7. Return user details (excluding password) in response.
+          4. Generate OTP
+          5. Store temporary user data in session
+          6. Save OTP in DB
+          7. Send verification email
+          8. Return success response
           8. Handle errors and return 500 if any issue occurs.
       */
 
@@ -37,45 +43,28 @@ const postSignup = async (req, res) => {
             return res.status(401).json({message: 'User already exists'});
         }
 
-        let imageData = null;
-        if (imageFile) {
-            try {
-                const cloudinaryResult = await uploadToCloudinary(
-                    imageFile.path,
-                    'my-profile'
-                );
-                fs.unlinkSync(imageFile.path);
-                imageData = {
-                    publicId: cloudinaryResult.publicId,
-                    url: cloudinaryResult.url,
-                };
-            } catch (uploadError) {
-                fs.unlinkSync(imageFile.path);
-                return res.status(500).json({message: 'Image upload failed'});
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        req.session.tempUser = {email, name, password, imageFile};
+
+        req.session.save(async (err) => {
+            if (err) {
+                console.error('Session save error:', err);
+                return res.status(500).json({message: 'Server error'});
             }
-        }
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+            await Otp.findOneAndUpdate(
+                {email},
+                {otp, createdAt: Date.now()},
+                {upsert: true, new: true}
+            );
 
-        const newUser = new User({
-            name,
-            email,
-            password: hashedPassword,
-            image: imageData || {publicId: '', url: ''},
+            await sendVerificationEmail(email, otp);
+
+            return res.status(200).json({
+                message: 'OTP sent to your email',
+                email: email,
+            });
         });
-        await newUser.save();
-
-        const userResponse = {
-            _id: newUser._id,
-            name: newUser.name,
-            email: newUser.email,
-            image: newUser.image,
-            products: newUser.products,
-            createdAt: newUser.createdAt,
-            updatedAt: newUser.updatedAt,
-        };
-        return res.status(200).json({user: userResponse});
     } catch (err) {
         console.log(err);
         return res.status(500).json({message: 'Something went wrong'});
@@ -163,4 +152,110 @@ const updateUser = async (req, res) => {
     }
 };
 
-export {postLogin, postSignup, updateUser};
+const verifyOTP = async (req, res) => {
+    /*
+        CODE FLOW:
+        1. Extract email and OTP from request body
+        2. Validate OTP existence and match along with expiration
+        3. Verify session validity
+        4. Process image upload (if any)
+        5. Hash password and save it in the DB
+        6. Generate JWT token
+        7. Cleanup OTP and session
+        8. Prepare response data and return it as response
+        9. Handle errors
+    */
+
+    try {
+        const {email, otp} = req.body;
+
+        const storedOTP = await Otp.findOne({email});
+        if (!storedOTP || storedOTP.otp !== otp) {
+            return res.status(400).json({message: 'Invalid Otp'});
+        }
+
+        if (Date.now() > new Date(storedOTP.createdAt).getTime() + 600000) {
+            return res.status(400).json({message: 'OTP expired'});
+        }
+
+        if (!req.session.tempUser || req.session.tempUser.email !== email) {
+            return res.status(400).json({message: 'Session expired. Please restart registration.'});
+        }
+
+        const {name, password, imageFile} = req.session.tempUser;
+
+        let imageData = null;
+        if (imageFile) {
+            try {
+                const cloudinaryResult = await uploadToCloudinary(
+                    imageFile.path,
+                    'my-profile'
+                );
+                fs.unlinkSync(imageFile.path);
+                imageData = {
+                    publicId: cloudinaryResult.publicId,
+                    url: cloudinaryResult.url,
+                };
+            } catch (uploadError) {
+                fs.unlinkSync(imageFile.path);
+                return res.status(500).json({message: 'Image upload failed'});
+            }
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword,
+            image: imageData || {publicId: '', url: ''},
+        });
+        await newUser.save();
+        const token = await createToken(newUser._id);
+
+        await Otp.deleteOne({email});
+        req.session.destroy((err) => {
+            if (err) console.error('Session destroy error:', err);
+        });
+
+        const userResponse = {
+            _id: newUser._id,
+            name: newUser.name,
+            email: newUser.email,
+            image: newUser.image,
+            products: newUser.products,
+            createdAt: newUser.createdAt,
+            updatedAt: newUser.updatedAt,
+        };
+        return res.status(200)
+            .header('Access-Control-Allow-Origin', BASE_URL)
+            .header('Access-Control-Allow-Credentials', 'true')
+            .json({user: userResponse, token: token});
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: 'Server error'});
+    }
+}
+
+/* TODO : TO CHECK IN FUTURE */
+const resendOTP = async (req, res) => {
+    try {
+        const {email} = req.body;
+        const newOTP = Math.floor(100000 + Math.random() * 900000).toString();
+
+        await Otp.findOneAndUpdate(
+            {email},
+            {otp: newOTP, createdAt: Date.now()},
+            {upsert: true}
+        );
+        await sendVerificationEmail(email, newOTP);
+
+        return res.status(200).json({message: 'New OTP sent'});
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: 'Server error'});
+    }
+};
+
+export {postLogin, postSignup, updateUser, verifyOTP, resendOTP};
