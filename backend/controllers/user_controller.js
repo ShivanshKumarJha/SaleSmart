@@ -155,13 +155,15 @@ const verifyOTP = async (req, res) => {
         4. Process image upload (if any)
         5. Hash password and save it in the DB
         6. Generate JWT token
-        7. Cleanup OTP and session
+        7. Cleanup OTP
         8. Prepare response data and return it as response
         9. Handle errors
     */
 
     try {
         const {email, otp} = req.body;
+        console.log(`Processing OTP verification for email: ${email}, Session ID: ${req.sessionID}`);
+        console.log(`Current session data:`, req.session);
 
         const storedOTP = await Otp.findOne({email});
         if (!storedOTP || storedOTP.otp !== otp) {
@@ -173,6 +175,7 @@ const verifyOTP = async (req, res) => {
         }
 
         if (!req.session.tempUser || req.session.tempUser.email !== email) {
+            console.log(`Session validation failed. Session tempUser:`, req.session.tempUser);
             return res.status(400).json({message: 'Session expired. Please restart registration.'});
         }
 
@@ -209,8 +212,18 @@ const verifyOTP = async (req, res) => {
         const token = await createToken(newUser._id);
 
         await Otp.deleteOne({email});
-        req.session.destroy((err) => {
-            if (err) console.error('Session destroy error:', err);
+
+        req.session.user = {
+            _id: newUser._id,
+            name: newUser.name,
+            email: newUser.email
+        };
+
+        await new Promise((resolve, reject) => {
+            req.session.save(err => {
+                if (err) reject(err);
+                else resolve();
+            });
         });
 
         const userResponse = {
@@ -222,12 +235,13 @@ const verifyOTP = async (req, res) => {
             createdAt: newUser.createdAt,
             updatedAt: newUser.updatedAt,
         };
+
         return res.status(200)
             .header('Access-Control-Allow-Origin', BASE_URL)
             .header('Access-Control-Allow-Credentials', 'true')
             .json({user: userResponse, token: token});
     } catch (err) {
-        console.error(err);
+        console.error('OTP verification error:', err);
         return res.status(500).json({message: 'Server error'});
     }
 }

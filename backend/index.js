@@ -29,7 +29,7 @@ app.options('*', cors(corsOptions));
 app.use(session({
     secret: SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: MongoStore.create({
         mongoUrl: MONGODB_URI,
         ttl: 24 * 60 * 60
@@ -47,6 +47,9 @@ app.use(express.urlencoded({limit: '50mb', extended: true}));
 
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.path} - Session ID: ${req.session.id}`);
+    if (NODE_ENV !== 'production') {
+        console.log(`Session data:`, req.session);
+    }
     next();
 });
 
