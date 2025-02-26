@@ -44,7 +44,7 @@ const postSignup = async (req, res) => {
         }
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        req.session.tempUser = {email, name, password, imageFile};
+        req.session.tempUser = {email, name, password, imagePath: imageFile?.path};
 
         await req.session.save();
 
@@ -170,31 +170,32 @@ const verifyOTP = async (req, res) => {
             return res.status(400).json({message: 'Invalid Otp'});
         }
 
-        if (Date.now() > new Date(storedOTP.createdAt).getTime() + 600000) {
+        if (Date.now() > new Date(storedOTP.createdAt).getTime() + 900000) {
             return res.status(400).json({message: 'OTP expired'});
         }
 
+        // console.log(req.session);
         if (!req.session.tempUser || req.session.tempUser.email !== email) {
             console.log(`Session validation failed. Session tempUser:`, req.session.tempUser);
             return res.status(400).json({message: 'Session expired. Please restart registration.'});
         }
 
-        const {name, password, imageFile} = req.session.tempUser;
+        const {name, password, imagePath} = req.session.tempUser;
 
         let imageData = null;
-        if (imageFile) {
+        if (imagePath) {
             try {
                 const cloudinaryResult = await uploadToCloudinary(
-                    imageFile.path,
+                    imagePath,
                     'my-profile'
                 );
-                fs.unlinkSync(imageFile.path);
+                fs.unlinkSync(imagePath);
                 imageData = {
                     publicId: cloudinaryResult.publicId,
                     url: cloudinaryResult.url,
                 };
             } catch (uploadError) {
-                fs.unlinkSync(imageFile.path);
+                fs.unlinkSync(imagePath);
                 return res.status(500).json({message: 'Image upload failed'});
             }
         }
@@ -218,13 +219,8 @@ const verifyOTP = async (req, res) => {
             name: newUser.name,
             email: newUser.email
         };
-
-        await new Promise((resolve, reject) => {
-            req.session.save(err => {
-                if (err) reject(err);
-                else resolve();
-            });
-        });
+        await req.session.save();
+        // console.log(req.session);
 
         const userResponse = {
             _id: newUser._id,

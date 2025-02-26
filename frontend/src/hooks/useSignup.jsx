@@ -19,6 +19,7 @@ export const useSignup = () => {
             });
 
             const json = await response.json();
+            // console.log(`Inside the useSignup hook : ${json}`)
 
             if (!response.ok) {
                 throw new Error(json.message || 'Signup failed');
@@ -27,10 +28,6 @@ export const useSignup = () => {
             navigate('/verify-otp', {
                 state: {
                     email: json.email,
-                    tempData: {
-                        name: json.tempData?.name,
-                        image: json.tempData?.image
-                    }
                 }
             });
         } catch (err) {
