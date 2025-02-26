@@ -29,14 +29,16 @@ app.options('*', cors(corsOptions));
 app.use(session({
     secret: SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     store: MongoStore.create({
         mongoUrl: MONGODB_URI,
         ttl: 24 * 60 * 60
     }),
     cookie: {
         secure: NODE_ENV === 'production',
-        maxAge: 1000 * 60 * 60 * 24
+        sameSite: NODE_ENV === 'production' ? 'none' : 'lax',
+        maxAge: 1000 * 60 * 60 * 24,
+        httpOnly: true,
     }
 }))
 
@@ -44,7 +46,7 @@ app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true}));
 
 app.use((req, res, next) => {
-    console.log(`${req.method} ${req.path} `);
+    console.log(`${req.method} ${req.path} - Session ID: ${req.session.id}`);
     next();
 });
 
