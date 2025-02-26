@@ -18,6 +18,11 @@ const VerifyOTPForm = () => {
     const {email} = location.state || {};
 
     useEffect(() => {
+        if (!email) {
+            navigate('/signup');
+            return;
+        }
+
         const storedExpiration = localStorage.getItem('otpExpiration');
         let initialExpiration;
 
@@ -52,12 +57,18 @@ const VerifyOTPForm = () => {
                 localStorage.removeItem('otpExpiration');
             }
         };
-    }, [timeLeft]);
+    }, [timeLeft, email, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         setError('');
+
+        if (!email) {
+            setError('Email not found. Please go back to signup.');
+            setIsLoading(false);
+            return;
+        }
 
         try {
             const response = await fetch(`${BASE_URL}/user/verify-otp`, {
@@ -77,6 +88,43 @@ const VerifyOTPForm = () => {
             localStorage.setItem('user', JSON.stringify(data));
             dispatch({type: 'LOGIN', payload: data});
             navigate('/app');
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleResendOTP = async () => {
+        if (!email) {
+            setError('Email not found. Please go back to signup.');
+            return;
+        }
+
+        setIsLoading(true);
+        setError('');
+
+        try {
+            const response = await fetch(`${BASE_URL}/user/resend-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email}),
+                credentials: 'include',
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to resend OTP');
+            }
+
+            const newExpiration = Date.now() + OTP_DURATION * 1000;
+            localStorage.setItem('otpExpiration', newExpiration.toString());
+            setExpirationTime(newExpiration);
+            setTimeLeft(OTP_DURATION);
+
+            setError('');
+            alert('New OTP has been sent to your email.');
         } catch (err) {
             setError(err.message);
         } finally {
@@ -108,7 +156,7 @@ const VerifyOTPForm = () => {
             <form onSubmit={handleSubmit} className="w-full max-w-sm px-4">
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-medium mb-2">
-                        Enter OTP sent to {email}
+                        Enter OTP sent to {email || "your email"}
                         <input
                             type="text"
                             value={otp}
@@ -131,10 +179,21 @@ const VerifyOTPForm = () => {
                 <button
                     type="submit"
                     disabled={isLoading || timeLeft <= 0}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mb-3"
                 >
                     {isLoading ? 'Verifying...' : 'Verify Code'}
                 </button>
+
+                {timeLeft <= 0 && (
+                    <button
+                        type="button"
+                        onClick={handleResendOTP}
+                        disabled={isLoading}
+                        className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isLoading ? 'Processing...' : 'Resend OTP'}
+                    </button>
+                )}
             </form>
         </div>
     );

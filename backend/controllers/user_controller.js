@@ -46,24 +46,18 @@ const postSignup = async (req, res) => {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         req.session.tempUser = {email, name, password, imageFile};
 
-        req.session.save(async (err) => {
-            if (err) {
-                console.error('Session save error:', err);
-                return res.status(500).json({message: 'Server error'});
-            }
+        await req.session.save();
 
-            await Otp.findOneAndUpdate(
-                {email},
-                {otp, createdAt: Date.now()},
-                {upsert: true, new: true}
-            );
+        await Otp.findOneAndUpdate(
+            {email},
+            {otp, createdAt: Date.now()},
+            {upsert: true}
+        );
+        await sendVerificationEmail(email, otp);
 
-            await sendVerificationEmail(email, otp);
-
-            return res.status(200).json({
-                message: 'OTP sent to your email',
-                email: email,
-            });
+        return res.status(200).json({
+            message: 'OTP sent to your email',
+            email: email,
         });
     } catch (err) {
         console.log(err);
