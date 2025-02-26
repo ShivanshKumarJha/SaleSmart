@@ -175,10 +175,10 @@ const verifyOTP = async (req, res) => {
         }
 
         // console.log(req.session);
-        if (!req.session.tempUser || req.session.tempUser.email !== email) {
-            console.log(`Session validation failed. Session tempUser:`, req.session.tempUser);
-            return res.status(400).json({message: 'Session expired. Please restart registration.'});
-        }
+        // if (!req.session.tempUser || req.session.tempUser.email !== email) {
+        //     console.log(`Session validation failed. Session tempUser:`, req.session.tempUser);
+        //     return res.status(400).json({message: 'Session expired. Please restart registration.'});
+        // }
 
         const {name, password, imagePath} = req.session.tempUser;
 
