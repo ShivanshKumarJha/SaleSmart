@@ -3,7 +3,6 @@ import {
   postLogin,
   postSignup,
   updateUser,
-  verifyOTP,
 } from '../controllers/user_controller.js';
 import { isAuth } from '../middleware/isAuth.js';
 import { upload } from '../config/multer.js';

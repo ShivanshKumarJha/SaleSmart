@@ -9,7 +9,6 @@ import AppLayout from "./pages/AppLayout.jsx";
 import Products from "./pages/Products.jsx";
 import User from "./pages/User.jsx";
 import NotFound from "./pages/NotFound.jsx";
-import VerifyOTP from "./pages/VerifyOTP.jsx";
 
 import {useProducts} from "./hooks/useProducts.jsx";
 
