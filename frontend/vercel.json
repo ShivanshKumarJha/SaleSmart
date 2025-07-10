@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "https://sales-smart-api.onrender.com/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
