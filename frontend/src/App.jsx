@@ -24,7 +24,6 @@ const App = () => {
                 <Route index element={<HomePage/>}/>
                 <Route path='login' element={<Login/>}/>
                 <Route path='signup' element={<Signup/>}/>
-                <Route path='verify-otp' element={<VerifyOTP/>}/>
                 <Route
                     path='app'
                     element={
