@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -16,16 +16,16 @@ const USER_PASS = process.env.USER_PASS;
 const NODE_ENV = process.env.NODE_ENV;
 
 export {
-    MONGODB_URI,
-    PORT,
-    SESSION_SECRET,
-    JWT_SECRET,
-    CLOUDINARY_CLOUD_NAME,
-    CLOUDINARY_API_KEY,
-    CLOUDINARY_API_SECRET,
-    LOCALHOST_URL,
-    PRODUCTION_URL,
-    USER_EMAIL,
-    USER_PASS,
-    NODE_ENV
+  MONGODB_URI,
+  PORT,
+  SESSION_SECRET,
+  JWT_SECRET,
+  CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET,
+  LOCALHOST_URL,
+  PRODUCTION_URL,
+  USER_EMAIL,
+  USER_PASS,
+  NODE_ENV,
 };
