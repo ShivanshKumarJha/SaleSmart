@@ -19,11 +19,25 @@ export const useProducts = () => {
   };
 
   /* To get all the products */
-  async function getProducts() {
+  async function getProducts(params = {}) {
     setIsLoading(true);
     setError(null);
 
-    const response = await fetch(`${BASE_URL}`);
+    // Build query string from params
+    const queryParams = new URLSearchParams();
+    
+    if (params.page) queryParams.append('page', params.page);
+    if (params.limit) queryParams.append('limit', params.limit);
+    if (params.search) queryParams.append('search', params.search);
+    if (params.filterOption) queryParams.append('filterOption', params.filterOption);
+    if (params.filterValue) queryParams.append('filterValue', params.filterValue);
+    if (params.sortBy) queryParams.append('sortBy', params.sortBy);
+    if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `${BASE_URL}?${queryString}` : BASE_URL;
+
+    const response = await fetch(url);
     const json = await response.json();
 
     if (!response.ok) {

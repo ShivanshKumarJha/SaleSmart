@@ -2,12 +2,23 @@ import { createContext, useContext, useReducer } from 'react';
 
 const initialState = {
   products: [],
+  totalItems: 0,
+  currentPage: 1,
+  totalPages: 0,
+  limit: 10,
 };
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_PRODUCTS':
-      return { ...state, products: action.payload };
+      return { 
+        ...state, 
+        products: action.payload.products,
+        totalItems: action.payload.totalItems,
+        currentPage: action.payload.currentPage,
+        totalPages: action.payload.totalPages,
+        limit: action.payload.limit
+      };
     case 'ADD_PRODUCT':
       return { ...state, products: [action.payload, ...state.products] };
     case 'DELETE_PRODUCT':
