@@ -48,8 +48,7 @@ const Products = () => {
         }
 
         getProducts(params);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pageFromUrl, limit, query, filterOption, filterVal, sortBy, sortOrder]);
+    }, [pageFromUrl, limit, query, filterOption, filterVal, sortBy, sortOrder, getProducts]);
 
     // Handle page change
     const handlePageChange = (newPage) => {

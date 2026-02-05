@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useProductContext } from '../contexts/ProductContext.jsx';
 import BASE_URL from '../constants/BASE_URL.js';
 import { useAuth } from './useAuth.jsx';
@@ -19,7 +19,7 @@ export const useProducts = () => {
   };
 
   /* To get all the products */
-  async function getProducts(params = {}) {
+  const getProducts = useCallback(async (params = {}) => {
     setIsLoading(true);
     setError(null);
 
@@ -48,7 +48,7 @@ export const useProducts = () => {
       setIsLoading(false);
       setError(null);
     }
-  }
+  }, [dispatch]);
 
   /* To add the product */
   async function addProduct({ productName, price, quantity, category }) {
