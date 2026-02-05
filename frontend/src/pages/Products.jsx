@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {useSearchParams} from 'react-router-dom';
 import {useProductContext} from '../contexts/ProductContext.jsx';
 import {useProducts} from '../hooks/useProducts.jsx';
@@ -38,16 +38,17 @@ const Products = () => {
         };
 
         if (query) params.search = query;
-        if (isFilter) {
+        if (filterOption && filterVal) {
             params.filterOption = filterOption;
             params.filterValue = filterVal;
         }
-        if (isSort) {
+        if (sortBy) {
             params.sortBy = sortBy;
             params.sortOrder = sortOrder;
         }
 
         getProducts(params);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageFromUrl, limit, query, filterOption, filterVal, sortBy, sortOrder]);
 
     // Handle page change
